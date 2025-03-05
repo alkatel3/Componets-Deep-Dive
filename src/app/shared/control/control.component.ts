@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostBinding, HostListener, inject, input, ViewEncapsulation } from '@angular/core';
+import { AfterContentInit, afterNextRender, afterRender, Component, contentChild, ContentChild, ElementRef, HostBinding, HostListener, inject, input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-control',
@@ -10,9 +10,9 @@ import { Component, ElementRef, HostBinding, HostListener, inject, input, ViewEn
   host: {
     class: 'control',
     '(click)': 'onClick()'
-}
+  }
 })
-export class ControlComponent {
+export class ControlComponent implements AfterContentInit {
   // @HostBinding('class') className ='control'
   // @HostListener('click') onClick() {
   //   console.log('Clicked')
@@ -20,10 +20,27 @@ export class ControlComponent {
 
   lable = input.required<string>()
 
-  private el =inject(ElementRef)
+  // @ContentChild('input') private control?: ElementRef<HTMLInputElement | HTMLTemplateElement>
+
+  private control = contentChild<ElementRef<HTMLInputElement | HTMLTemplateElement>>('input')
+
+  private el = inject(ElementRef)
+
+  constructor(){
+    afterRender(()=>{
+      console.log('afterRender')
+    });
+    afterNextRender(()=>{
+      console.log('afterNextRender')
+    })
+  }
 
   onClick() {
     console.log('Clicked')
     console.log(this.el)
+  }
+
+  ngAfterContentInit(): void {
+    console.log('AfterContentInit')
   }
 }
